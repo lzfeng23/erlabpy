@@ -1,10 +1,12 @@
+import re
+
 import pytest
 import xarray
 import xarray.testing
 
 from erlab.accessors.kspace import IncompleteDataError
 from erlab.constants import AxesConfiguration
-from erlab.io.exampledata import generate_data_angles, generate_hvdep_cuts
+from erlab.io.exampledata import generate_hvdep_cuts
 
 
 @pytest.fixture(scope="module")
@@ -12,15 +14,6 @@ def hvdep():
     data = generate_hvdep_cuts((50, 250, 300), seed=1)
     data.kspace.inner_potential = 10.0
     return data
-
-
-@pytest.fixture(scope="module")
-def cut():
-    return generate_data_angles(
-        (300, 1, 500),
-        angrange={"alpha": (-15, 15), "beta": (4.5, 4.5)},
-        assign_attributes=True,
-    ).T
 
 
 @pytest.fixture(scope="module")
@@ -116,6 +109,16 @@ def test_offsets(data_type, request) -> None:
     answer["xi"] = 10.0
     assert dict(data.kspace.offsets) == answer
 
+    with pytest.raises(
+        KeyError,
+        match=re.escape(
+            "Invalid offset key 'invalid' for experimental configuration "
+            f"{data.kspace.configuration}. Valid keys are: "
+            f"{data.kspace._valid_offset_keys}."
+        ),
+    ):
+        data.kspace.offsets["invalid"] = 10.0
+
 
 @pytest.mark.parametrize("use_dask", [True, False], ids=["dask", "no-dask"])
 @pytest.mark.parametrize("energy_axis", ["kinetic", "binding"])
@@ -172,7 +175,7 @@ def test_kconv(
                 match="Energy axis of photon energy dependent data must be in "
                 "binding energy.",
             ):
-                kconv = data.kspace.convert(silent=True)
+                kconv = data.kspace.convert(silent=False)
             return
 
         with pytest.warns(
@@ -180,9 +183,9 @@ def test_kconv(
             match="The energy axis seems to be in terms of kinetic energy, "
             "attempting conversion to binding energy.",
         ):
-            kconv = data.kspace.convert(silent=True)
+            kconv = data.kspace.convert(silent=False)
     else:
-        kconv = data.kspace.convert(silent=True)
+        kconv = data.kspace.convert(silent=False)
 
     if use_dask:
         kconv = kconv.compute()

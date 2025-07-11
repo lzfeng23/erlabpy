@@ -11,6 +11,8 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+permissions:
+  contents: read
 env:
   FORCE_COLOR: 1
 
@@ -20,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DISPLAY: ":99.0"
+      COV_VERSION: "3.13"
+      COV_QT_API: "pyside6"
     strategy:
       fail-fast: false
       matrix:
@@ -36,9 +40,10 @@ jobs:
           /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
           python-version: ${{ matrix.python-version }}
 
       - name: Install project with all extras
@@ -47,21 +52,21 @@ jobs:
           export QT_API=${{ matrix.qt-api }}
 
       - name: Test with pytest
-        if: matrix.python-version != '3.12' || matrix.qt-api != 'pyside6'
+        if: ${{ matrix.python-version != env.COV_VERSION || matrix.qt-api != env.COV_QT_API }}
         run: uv run pytest -v
 
       - name: Test with pytest with coverage
-        if: matrix.python-version == '3.12' && matrix.qt-api == 'pyside6'
-        run: uv run pytest -v --cov erlab --junitxml=junit.xml
+        if: ${{ matrix.python-version == env.COV_VERSION && matrix.qt-api == env.COV_QT_API }}
+        run: uv run pytest -v --cov erlab --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
       - name: Upload coverage to Codecov
-        if: matrix.python-version == '3.12' && matrix.qt-api == 'pyside6'
+        if: ${{ matrix.python-version == env.COV_VERSION && matrix.qt-api == env.COV_QT_API }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload test results to Codecov
-        if: ${{ matrix.python-version == '3.12' && matrix.qt-api == 'pyside6' && !cancelled() }}
+        if: ${{ matrix.python-version == env.COV_VERSION && matrix.qt-api == env.COV_QT_API && !cancelled() }}
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -73,10 +78,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          python-version: "3.12"
+          cache-dependency-glob: "uv.lock"
+          python-version: "3.13"
 
       - name: Install mypy and dependencies
         run: uv sync --all-extras --dev --group pyqt6
@@ -91,38 +97,3 @@ jobs:
           name: mypy-report
           path: mypy-report/
           if-no-files-found: error
-
-  changelog:
-    name: Update changelog
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.repository == 'kmnhan/erlabpy'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
-          fetch-depth: 0
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install commitizen cz-changeup
-
-      - name: Generate changelog
-        run: |
-          cz changelog
-
-      - name: Commit and push changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "chore: update changelog"
-            git push
-          else
-            echo "nothing to commit, working tree clean"
-          fi

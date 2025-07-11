@@ -43,10 +43,10 @@ jobs:
 
       - name: Install uv
         if: env.REVISION != env.PREVIOUS_REVISION
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Build and publish package distributions to PyPI
         if: env.REVISION != env.PREVIOUS_REVISION

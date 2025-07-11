@@ -1,10 +1,272 @@
-## Unreleased
+## v3.12.1 (2025-07-04)
+
+### 🐞 Bug Fixes
+
+- **io.plugins.merlin:** take energy step from data attributes ([84bc6b9](https://github.com/kmnhan/erlabpy/commit/84bc6b9e133c841597f6f74e727a13fe3c6a0147))
+
+  Fixed and swept mode scans have random numerical errors in the start & step of the energy axis. The error of the step accumulates over the scan, effectively resulting in a tiny renormalization of the energy axis. We choose to ignore the energy axis information contained in the wave, and take the step from the attributes instead.
+
+### ♻️ Code Refactor
+
+- **io.plugins.merlin:** do not subtract BL Energy from eV for Live XY and Live Polar scans ([379fc8d](https://github.com/kmnhan/erlabpy/commit/379fc8dd9635589bbcdcd4af1f61e38d3f4a0959))
+
+  The BL Energy attribute is not reliable for Live XY and Live Polar scans, so we just take the raw energy values like Igor Pro does.
+
+## v3.12.0 (2025-06-29)
+
+### ✨ Features
+
+- **io:** allow loading single-wave `.itx` files using `xarray.open_dataarray` ([c5a0d59](https://github.com/kmnhan/erlabpy/commit/c5a0d5972941b5db165277f232162ee9a855e2fe))
+
+- **imagetool:** allow more color options to be passed to the ImageTool constructor ([983b7ab](https://github.com/kmnhan/erlabpy/commit/983b7ab78436fd0779ab190dd10ffd34b1bdb471))
+
+  Adds boolean flag `high_contrast` and numbers `vmin` and `vmax` to the ImageTool constructor.
+
+- **imagetool.manager:** add duplicate functionality ([f635236](https://github.com/kmnhan/erlabpy/commit/f635236a67549d3e6ebc30d084babcfc4cc3df00))
+
+  ImageTool windows in the manager can now be duplicated from the right-click context menu.
+
+- **imagetool.manager:** replace data in existing ImageTool manager windows ([a86b64b](https://github.com/kmnhan/erlabpy/commit/a86b64b0616b811698cf17f5fff7897ca748d24a))
+
+  Adds a new function `erlab.interactive.imagetool.manager.replace_data` that allows replacing the data in existing ImageTool manager windows. Also adds a new argument `replace` to the `itool` function which takes a list of indexes of existing ImageTool manager windows to replace their data.
+
+- **io.dataloader:** add new method `pre_combine_multiple` method for data pre-processing ([91b7455](https://github.com/kmnhan/erlabpy/commit/91b745510ba6307d5f9c244b1aa971a98ed53622))
+
+  Adds a new method `pre_combine_multiple` to the `DataLoader` class that allows pre-processing multiple data files prior to combining them.
+
+### 🐞 Bug Fixes
+
+- **analysis.tranform.symmetrize:** fix subtract behavior to produce properly antisymmetrized output (#150) ([b00625c](https://github.com/kmnhan/erlabpy/commit/b00625cf253a77719a5c2d89c32805e4ff223f00))
+
+- **goldtool:** fix potential segfault by copying instead of supplying a pointer ([5e3a812](https://github.com/kmnhan/erlabpy/commit/5e3a812480e9f212ab1b17ec131ce7dfe26d3fdf))
+
+- **imagetool.manager:** do not override recent directory and loader name for already open data explorer ([e82c73b](https://github.com/kmnhan/erlabpy/commit/e82c73ba956cf0715dfbf20a3a221d3f46b132a7))
+
+- **imagetool:** preserve color levels when reloading compatible data ([5948c56](https://github.com/kmnhan/erlabpy/commit/5948c56c496b9e63a129fab9a09ccd5172705c73))
+
+- **imagetool:** keep color related settings when opening in new window from existing tool ([96dfa7a](https://github.com/kmnhan/erlabpy/commit/96dfa7a2802e0f3d74912e73b7220829cde1fc33))
+
+- **imagetool:** keep visible colorbar on unarchive or reload ([1f3af1c](https://github.com/kmnhan/erlabpy/commit/1f3af1ceebdc660c0afcff5269426303985223e0))
+
+- **imagetool.manager:** fix tools not showing on windows ([4e8f8a8](https://github.com/kmnhan/erlabpy/commit/4e8f8a8bed33a202bf792c559632d378120390f4))
+
+- **io.plugins.merlin:** fix broken energy axis while concatenating non-dither mode motor scans ([861e68f](https://github.com/kmnhan/erlabpy/commit/861e68f696192062a81b9f7ce25a023ed8fcc77f))
+
+- **analysis.fit.models:** allow StepEdgeModel to be used in composite models ([77fb4e6](https://github.com/kmnhan/erlabpy/commit/77fb4e6c076b635d99973cbe2e3e6609a0269aab))
+
+### ♻️ Code Refactor
+
+- **imagetool.manager:** improve server connection handling ([7989b5d](https://github.com/kmnhan/erlabpy/commit/7989b5dd76513b575dfa32fec2068ae1d23f61d6))
+
+## v3.11.1 (2025-05-28)
+
+### 🐞 Bug Fixes
+
+- **io.plugins.snu1:** change wrong configuration value ([a089d3a](https://github.com/kmnhan/erlabpy/commit/a089d3a87403a153baaa62de3bdb8f1b0130b2ce))
+
+## v3.11.0 (2025-05-28)
+
+### ✨ Features
+
+- **imagetool:** add "Edit Coordinates" option ([24e8875](https://github.com/kmnhan/erlabpy/commit/24e887558ef9395965f260e5b8b2e946cf0352ca))
+
+  Adds a new feature to ImageTool that allows users to edit the coordinates directly. The new dialog can be accessed via `Edit Coordinates` in the `Edit` menu.
+
+- **io.igor:** add functions to read igor text files (#142) ([1075b1e](https://github.com/kmnhan/erlabpy/commit/1075b1e7a499c556d2388d21e4ca195c1500e3ae))
+
+  Also adds a data loader plugin for the spin-ARPES setup (system 1) at Seoul National University.
+
+- **imagetool.manager:** add check for invalid python identifiers when storing data with iPython ([f3bf529](https://github.com/kmnhan/erlabpy/commit/f3bf529ce3e31cf2df133a0ea0f857fb50dd04aa))
+
+- **io:** add data loader for ALS BL10.0.1 HERS ([4945fe7](https://github.com/kmnhan/erlabpy/commit/4945fe76b68f1e954a9358b9df6bfd4645584e84))
+
+### 🐞 Bug Fixes
+
+- **imagetool:** preserve coordinate order displayed in repr ([d54462c](https://github.com/kmnhan/erlabpy/commit/d54462c4a4db7647f2859ad83b1c5cd5c1a0b383))
+
+- **imagetool.manager:** improve taskbar grouping on Windows ([ae86938](https://github.com/kmnhan/erlabpy/commit/ae86938d923d8cbe72bcff3bd69ec90f5acca9e3))
+
+- **interactive:** correctly show exceptions raised during initializing interactive tools ([75fd45e](https://github.com/kmnhan/erlabpy/commit/75fd45e37df1a3d2d0c5e48071d9c29c6120761b))
+
+- **imagetool:** correctly display error message for undefined selection code in 2D data ([6a1b276](https://github.com/kmnhan/erlabpy/commit/6a1b2760630eef535e591d8e7fd40e1741121657))
+
+- **analysis.image:** allow N-dimensional input to 2D curvature ([83048b9](https://github.com/kmnhan/erlabpy/commit/83048b955d9684dc4d6f0c5ec476c5ed323cd06b))
+
+  Allow N-dimensional input to 2D curvature function. The curvature is computed for the first two dimensions.
+
+## v3.10.2 (2025-05-20)
+
+### 🐞 Bug Fixes
+
+- **io.dataloader:** fix concatenation of multiple files (#139) ([0f16d96](https://github.com/kmnhan/erlabpy/commit/0f16d9667b5b9b82b1f394cfe0e5abd67b942cc6))
+
+  Reverts the behavior of the concatenation of multiple files, fixing failures while loading multidimensional motor scans.
+
+  Also adds support for data across multiple files with some data missing non-dimensional coordinates.
+
+- **imagetool.manager:** set xarray option `keep_attrs` to `True` by default in console ([330aca9](https://github.com/kmnhan/erlabpy/commit/330aca9d2adc405e9a769f40a66e7550a791caaf))
+
+### ♻️ Code Refactor
+
+- **io.plugins.erpes:** add 'laser_power' to coordinate attributes (#140) ([0b86283](https://github.com/kmnhan/erlabpy/commit/0b862834e4ac2d895e88ed1b2fd3b515c1eb647a))
+
+- remove deprecated direct comparison of uncertainties ([c237a4d](https://github.com/kmnhan/erlabpy/commit/c237a4d30432c638529d1a2c7183651b58db53ba))
+
+## v3.10.1 (2025-05-01)
+
+### 🐞 Bug Fixes
+
+- **io.plugins.merlin:** load motor position file as string to handle empty lines and trailing spaces (#136) ([7305f8f](https://github.com/kmnhan/erlabpy/commit/7305f8ff79a4d1687f227e5d2f9c89a7208d06f2))
+
+## v3.10.0 (2025-05-01)
+
+### ✨ Features
+
+- **dtool:** add `fillna()` to generated code for input data with missing values ([fc1ad89](https://github.com/kmnhan/erlabpy/commit/fc1ad89d522ebd9d34a8a710b36b1e79abeaa657))
+
+- **imagetool:** add IPython magic commands for ImageTool integration ([470e0b4](https://github.com/kmnhan/erlabpy/commit/470e0b46cbec7e8f3edd1a2329abeeeb76b76c9d))
+
+  Adds a new IPython magic command `%itool` for convenient integration of ImageTool with IPython and Jupyter notebooks. Load the extension using `%load_ext erlab.interactive` and run `%itool?` to see available commands.
+
+- **imagetool:** enable directly opening tools with cropped data ([d6bf78a](https://github.com/kmnhan/erlabpy/commit/d6bf78ae4673ea35dd1f250c924e2a1e4a79b064))
+
+  A new feature has been added to the imagetool that allows users to open the tool with cropped data directly. When holding down the Alt key (Option on Mac) while in the right-click menu of the image, relevant menus will automatically work with the data cropped to the currently visible range.
+
+- **explorer:** show the name of the current directory in data explorer ([7262b4c](https://github.com/kmnhan/erlabpy/commit/7262b4c6cb5f7a461a108eca8bc11d95a9e35531))
+
+- **imagetool:** add edge correction menu ([fb47f1b](https://github.com/kmnhan/erlabpy/commit/fb47f1b23889030d8f4ae61455284af26530e137))
+
+  Adds a new menu item that allows correcting the Fermi edge by loading a polynomial fit result from a file saved from `goldtool`.
+
+- **goldtool:** add button to save polynomial fit to file ([94422b1](https://github.com/kmnhan/erlabpy/commit/94422b1429ae61ef4d250ffe0d74cd1a7a5dc5c2))
+
+- **interactive.utils:** add functions for saving and loading fit results from the GUI ([30caff2](https://github.com/kmnhan/erlabpy/commit/30caff28f2c82b1dd6eb82092fe9338390e3f4a4))
+
+### 🐞 Bug Fixes
+
+- **imagetool:** fix centered normalization and reverse colormap not being applied when loading or unarchiving ([5626509](https://github.com/kmnhan/erlabpy/commit/56265093b0561ecd49b6801d88171b4b0a050155))
+
+- **imagetool:** resolve undesired y axis autoscaling of line plots when resizing unrelated axes ([a089c8b](https://github.com/kmnhan/erlabpy/commit/a089c8bb29b2f3a994ecff36b30b190d53670e9f))
+
+- **imagetool:** resolve associated coords not updating on data reload ([66c44f5](https://github.com/kmnhan/erlabpy/commit/66c44f5b3c6591a1771551e3d50b1eb24ff95f5a))
+
+  Fixes associated coordinates limits not being updated when the data is reloaded.
+
+- **plotting:** fix color limits not being autoscaled when passing an iterable of norms to `plot_slices` ([fbfd3ec](https://github.com/kmnhan/erlabpy/commit/fbfd3ec41a807a01d685c00c9f5b9a1f7ad7e514))
+
+### ⚡️ Performance
+
+- **goldtool:** do not apply correction if not required ([6276883](https://github.com/kmnhan/erlabpy/commit/6276883b1fc78b50fac4ec6b481fff5ae490095c))
+
+  Greatly improves the performance of spline and polynomial fitting in goldtool by correcting data just in time.
+
+### ♻️ Code Refactor
+
+- **imagetool:** improve error messages for invalid input ([90d3461](https://github.com/kmnhan/erlabpy/commit/90d34612d6969d3cd69f97202d6eb6e9370daa97))
+
+- **manager:** add internal function to retreive recent directory (intraprocess only) ([5d5cf96](https://github.com/kmnhan/erlabpy/commit/5d5cf96fec86c0917c0718d2cd1225787ded202e))
+
+## v3.9.0 (2025-04-16)
+
+### ✨ Features
+
+- **io.dataloader:** implement loader-based parallel keyword arguments ([ea8cfc6](https://github.com/kmnhan/erlabpy/commit/ea8cfc6d150a942d9c9b6bc5beaea8019e2ec335))
+
+  Allows plugins to pass different keyword arguments to `joblib.Parallel` by setting the `parallel_kwargs` class attribute.
+
+- **ktool:** set default angle offsets to coordinate values ([a8115d0](https://github.com/kmnhan/erlabpy/commit/a8115d05122b08311ec60fe1dbb64f835f22e4a9))
+
+- **ktool:** show current configuration in KspaceTool GUI ([907aeb9](https://github.com/kmnhan/erlabpy/commit/907aeb995a4c8a4445209b20c77f7bf06dd7701b))
+
+- **analysis.image:** add function to remove energy-independent 'stripe' artifacts (#122) ([028239e](https://github.com/kmnhan/erlabpy/commit/028239ee4ef41a33ba57a494eee60b519b8c0aee))
+
+### 🐞 Bug Fixes
+
+- **io.dataloader:** enhance value formatting for native datetime coordinates in summary ([f79bce5](https://github.com/kmnhan/erlabpy/commit/f79bce5de9eb1a923655e846385fbdbc84dfa9e9))
+
+- **io.plugins.erpes:** fix summary generation ([598fb2d](https://github.com/kmnhan/erlabpy/commit/598fb2d68a612b373493f7ce12ba9f1d69bde0ec))
+
+- **utils.formatting:** improve value formatting for various types and enhance datetime handling ([7e34614](https://github.com/kmnhan/erlabpy/commit/7e3461472d713eec53ef1012998c3ea1b053030d))
+
+- **ktool:** properly set initial bounds and resolution ([5abf988](https://github.com/kmnhan/erlabpy/commit/5abf9880e165b12bf70de2d15fbdb94129c2b2f2))
+
+- **ktool:** expand offset spin box range from ±180 to ±360 degrees ([6895214](https://github.com/kmnhan/erlabpy/commit/68952147b39d37b0f8d7a9915aa4b6dfb4cf2df7))
+
+- **qsel:** preserve non-averaged coord in multidimensional associated coordinates (#127) ([44ceb7e](https://github.com/kmnhan/erlabpy/commit/44ceb7e328036a7b55e58d6a591c0d927fde5545))
+
+  Fixes an issue where averaging over a dimension with `DataArray.qsel()` or `DataArray.qsel.average()` with multidimensional associated coordinates would average the coordinates over all dimensions instead of averaging over just the specified dimension.
+
+- **utils.formatting:** properly format numpy datetime64 objects ([1c74983](https://github.com/kmnhan/erlabpy/commit/1c7498342aa17e59b1a7d0f128cecd7b4e056bb9))
+
+### ⚡️ Performance
+
+- **io.plugins.erpes:** default to threading ([ebfc527](https://github.com/kmnhan/erlabpy/commit/ebfc527f50b7583b3f3f5139746e074c385477ac))
+
+- **io.plugins.da30:** use `libarchive-c` library if it is installed when loading DA30 zip files ([6b9369f](https://github.com/kmnhan/erlabpy/commit/6b9369fc363ed0c0ba8f99c876251a26b7fe27d6))
+
+### ♻️ Code Refactor
+
+- **kspace:** do not write offset attributes unless explicitly specified ([613820f](https://github.com/kmnhan/erlabpy/commit/613820f80fb667332512d75d3a35e5ca4c999778))
+
+- **io.plugins.erpes:** promote waveplate angle attributes to coordinates ([6920528](https://github.com/kmnhan/erlabpy/commit/6920528ec464873cef1cc8509a0159846cc5601b))
+
+## v3.8.4 (2025-04-09)
+
+### 🐞 Bug Fixes
+
+- **analysis.transform:** correct symmetrize function to return full data ([7ad76db](https://github.com/kmnhan/erlabpy/commit/7ad76db50fe49ce5fdb6b4ce76a213f08cff1ad3))
+
+## v3.8.3 (2025-04-09)
+
+### 🐞 Bug Fixes
+
+- **analysis.fit.minuit:** properly support composite models ([64b31a6](https://github.com/kmnhan/erlabpy/commit/64b31a61b71599cc7d5c97c8402f0546a91425e4))
+
+- **qshow.fit:** support interactively plotting components for concatenated fit results ([6bec175](https://github.com/kmnhan/erlabpy/commit/6bec175169dc5716f3f1a1a4d73ce2968ad07ca7))
+
+- **analysis.transform.symmetrize:** keep original coordinate direction in symmetrization ([be255c2](https://github.com/kmnhan/erlabpy/commit/be255c266cedca2ead566aea1a0158762c01a117))
+
+- **imagetool.manager:** ensure console and explorer are closed on main window exit ([d39360d](https://github.com/kmnhan/erlabpy/commit/d39360d015efce09cbf39c600825af9648f32e25))
+
+- **analysis.transform.symmetrize:** correct full mode symmetrization ([e21aa3f](https://github.com/kmnhan/erlabpy/commit/e21aa3f63754ccac5584fea230eafd89a3e3e66e))
+
+### ♻️ Code Refactor
+
+- **analysis.fit:** add broadened Fermi-Dirac model without linear background ([4c4552d](https://github.com/kmnhan/erlabpy/commit/4c4552d4538d58fe72ede3615d6e5c85dc7aac88))
+
+## v3.8.2 (2025-03-25)
+
+### 🐞 Bug Fixes
+
+- **analysis.transform.symmetrize:** fix compatibility with data including NaN ([ce173ce](https://github.com/kmnhan/erlabpy/commit/ce173ce8fc067ee2d9898f89883f7120b9784f47))
+
+- **formatting:** make float formatting use scientific notation for very small values ([83843a0](https://github.com/kmnhan/erlabpy/commit/83843a047c5b38a6e68d92eb2fb430fa744652f7))
+
+- **plugins.erpes:** promote more attributes to coords ([c2c066a](https://github.com/kmnhan/erlabpy/commit/c2c066ae7bc09af69f393c4cf79e00fc925baaf0))
+
+- **dataloader:** allow datetime and callable objects in `additional_coords` ([732288f](https://github.com/kmnhan/erlabpy/commit/732288f585cef6b2b8cff86cb9c35aa9cbaff2dd))
+
+- **imagetool:** update associated coords on show and reload; ensure float64 type for associated coordinates ([1958b80](https://github.com/kmnhan/erlabpy/commit/1958b80e47bac3bb4424733c18d66a4ebfa09668))
+
+- **qsel:** allow passing arrays to simultaneously select multiple indices ([a5c987b](https://github.com/kmnhan/erlabpy/commit/a5c987bca3bd1fd0d3874129c9bc33226716ed8a))
+
+  `DataArray.qsel` now supports collection arguments. For example, actions like `darr.qsel(x=[1, 2, 3], x_width=2)` now works properly.
+
+- **analysis.fit.functions:** allow passing arrays to any argument ([ffe4914](https://github.com/kmnhan/erlabpy/commit/ffe491459c555e05ecde9015559298375aad7347))
 
 ### ⚡️ Performance
 
 - **imagetool.manager:** improve server responsiveness (#117) ([255c04f](https://github.com/kmnhan/erlabpy/commit/255c04f7f1950fa06bfd466f0137d3d616a23b8d))
 
   Changes the internal detection mechanism for running manager instances to be more reliable, along with some server side micro-optimizations.
+
+### ♻️ Code Refactor
+
+- **kspace:** hide progress messages during momentum conversion ([9eab40c](https://github.com/kmnhan/erlabpy/commit/9eab40ce1fa8c1f921c526ef71e943bc3df26aa2))
+
+  Hides the printed messages during momentum conversion by default. The messages can be enabled by passing `silent=False` to `DataArray.kspace.convert`.
+
+- **imagetool.fastslicing:** fix type signature ordering ([a409322](https://github.com/kmnhan/erlabpy/commit/a4093224e60401d8c144d7a3bbe4429f9fe8e5e1))
 
 ## v3.8.1 (2025-03-11)
 
